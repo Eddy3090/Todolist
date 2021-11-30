@@ -8,9 +8,9 @@
 
 * 训练loss
   * 两阶段训练，第一阶段$$L_1=L_m+10*L_f$$，第二阶段$$L_2=L_m$$
-  * $$L_m=\displaystyle \sum_{n=1}^{N-1}\sum_i||\hat{\pmb{p}}_{i,n}-\hat{\pmb{q}}_{j,n+1}||$$
+  * $$L_m=\displaystyle \sum_{n=1}^{N-1}\sum_i\left\|\hat{\pmb{p}}_{i,n}-\hat{\pmb{q}}_{j,n+1}\right\|$$
     * 经过warp之后，$$\hat{p}_{i,n}$$为第n帧的第i个点，$$\hat{q}_{j,n+1}$$为第n+1帧的第j个点，两点通过光流匹配，此loss限制相邻帧的匹配点距离最小
-  * $$L_f=\displaystyle \sum_{n=2}^{N-1}||\hat{\pmb{G}}\cdot\mathcal{F}\pmb{W}_n||_2$$
+  * $$L_f=\displaystyle \sum_{n=2}^{N-1}\left\|\hat{\pmb{G}}\cdot\mathcal{F}\pmb{W}_n\right\|_2$$
     * 频域loss，傅里叶变换之后与inverted Gaussian map相乘，目的在于增强低频能量，抑制中高频能量，高频与噪声有关，中频与local distortion有关
     *  $$\hat{\pmb{G}}=(max(\pmb{G})-\pmb{G})/max(\pmb{G})$$，图示如下
 

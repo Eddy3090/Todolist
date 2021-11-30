@@ -54,14 +54,14 @@ https://zhuanlan.zhihu.com/p/67302545
      4-layer pyramid  {$$\pmb{C}^1,\pmb{C}^2,\pmb{C}^3,\pmb{C}^4$$}，$$\pmb{C}^k\in{\mathbb{R}^{H\times{W}\times{H/2^k}\times{W/2^k}}}$$
   * correlation lookup
     在迭代更新过程中，利用当前flow $$(\pmb{f}^1,\pmb{f}^2)$$，得到$$I_1$$上点$$\pmb{x}=(u,v)$$在 $$I_2$$上的对应点$$\pmb{x^{'}}=(u+f^1(u),v+f^2(v))$$，定义其邻域为
-    $$\mathcal{N}(\pmb{x^{'}})_r=\{\pmb{x^{'}}+\pmb{dx}|\pmb{dx}\in{\mathbb{Z}^2},||\pmb{dx}||_1\leq{r}\}$$
+    $$\mathcal{N}(\pmb{x^{'}})_r=\{\pmb{x^{'}}+\pmb{dx}|\pmb{dx}\in{\mathbb{Z}^2},\left\|\pmb{dx}\right\|_1\leq{r}\}$$
     找到不同尺度下r范围内的correlation volume的值，叠加为correlation特征
 * Iterative Updates
   * GRU cell
     ![image-20211119174310006](1109_flowNet.assets/image-20211119174310006.png)
     其中 $$x_t$$为光流，correlation特征图，context features 的叠加
 * Loss
-  $$\mathcal{L}=\displaystyle\sum_{i=1}^N\gamma^{N-i}||\pmb{f}_{gt}-\pmb{f}_i||_1$$
+  $$\mathcal{L}=\displaystyle\sum_{i=1}^N\gamma^{N-i}\left\|\pmb{f}_{gt}-\pmb{f}_i\right\|_1$$
   $$\gamma=0.8$$
 
 ![image-20211119150900423](1109_flowNet.assets/image-20211119150900423.png)

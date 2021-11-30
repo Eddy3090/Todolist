@@ -8,11 +8,11 @@
 * 生成网络有两个输出，T0-T4用于warp输入帧，经过crop之后生成稳像，另一个输出steady frame用于后续的条件输入
 * 训练优势：1）目标就是让生成帧与稳定帧尽量接近，不需要设计hand-craft feature和对应的目标函数；2）生成网络输出的steady frame没有warp原图后的黑边，减少对网络预测的影响。
 * 生成器loss——L1 loss and the vgg19-net feature similarity， D1，D2为两个判别器
-   $$L_{stab}(I^t_{gt}, I_s^t)=\lambda_1||Vgg^19(I^t_{gt})-Vgg^19(I_s^t)||+\lambda_2||I^t_{gt}-I_s^t||$$
+   $$L_{stab}(I^t_{gt}, I_s^t)=\lambda_1\left\|Vgg^19(I^t_{gt})-Vgg^19(I_s^t)\right\|+\lambda_2\left\|I^t_{gt}-I_s^t\right\|$$
   $$L_G=L_{stab}+D_1(G^t,I_s^t)+D_2(A^t,I_s^t)$$
 * 判别器loss
-  $$L_{D_1}=||D_1(G^t,I_{gt}^t)||_2^2+||1-D_1(G^t,I_s^t)||_2^2$$
-  $$L_{D_2}=||D_2(A^t,I_{gt}^t)||_2^2+||1-D_2(A^t,I_s^t)||_2^2$$
+  $$L_{D_1}=\left\|D_1(G^t,I_{gt}^t)\right\|_2^2+\left\|1-D_1(G^t,I_s^t)\right\|_2^2$$
+  $$L_{D_2}=\left\|D_2(A^t,I_{gt}^t)\right\|_2^2+\left\|1-D_2(A^t,I_s^t)\right\|_2^2$$
 * limit
   * 只全局仿射变换，忽略了局部变换
   * 未针对所有视频帧生成全局稳定路径，时间相干性弱
@@ -43,17 +43,17 @@ STN consists of a light convolutional localization network，summarize the curre
   * 预测二维仿射变换$$H_t$$  以及per-pixel warp field $$W_t$$
     $$\hat{p}_{i,t}=H_tp_{i,t}+W_t(p_{i,t})\qquad\hat{p}_{j,t+1}=H_{t+1}p_{j,t+1}+W_{t+1}(p_{j,t+1})$$
   * 最小化warped pixel positions的欧式距离
-    $$E_o(W,H)=\frac{1}{wh(T-1)}\displaystyle\sum_{t=1}^{T-1}(\displaystyle\sum_{i=1}^{wh}||\hat{p}_{i,t}-\hat{p}_{j,t+1}||^2+\displaystyle\sum_{k=1}^{wh}||\hat{p}_{l,t}-\hat{p}_{k,t+1}||^2)$$
+    $$E_o(W,H)=\frac{1}{wh(T-1)}\displaystyle\sum_{t=1}^{T-1}(\displaystyle\sum_{i=1}^{wh}\left\|\hat{p}_{i,t}-\hat{p}_{j,t+1}\right\|^2+\displaystyle\sum_{k=1}^{wh}\left\|\hat{p}_{l,t}-\hat{p}_{k,t+1}\right\|^2)$$
   * 正则化设计，所有点的位置可以用四个角点的线性插值表示，如果全图的warp是线性的，warp之后线性插值的权重不变
     $$P_t=DS_t \qquad \Delta{P_t}=D\Delta{S_t}$$
   * 最小化线性warp——$$\Delta{P_t}$$与预测warp——$$W_t$$ 的差异
-    $$||W_t-D\Delta{S_t}||_2=0$$
+    $$\left\|W_t-D\Delta{S_t}\right\|_2=0$$
     $$\Delta{S_t}=(D^TD)^{-1}D^TW_t$$
     $$E_r(W)=W_t-\Delta{P_t}=W_t-D(D^TD)^{-1}D^TW_t$$
   * 对光流较大的地方正则化加强（光流出错影响大）
     $$E_p=F_t^2+\bar{F_t}^2$$
   * final loss
-    $$\displaystyle\min_{W,H}E_o(W,H)+\lambda||E_p\cdot{E_r(W)}||_1$$
+    $$\displaystyle\min_{W,H}E_o(W,H)+\lambda\left\|E_p\cdot{E_r(W)}\right\|_1$$
 
 
 
