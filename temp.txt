@@ -1,0 +1,16 @@
+/etc/profile
+
+* export CUDA_HOME=/usr/local/cuda-11.4
+  export LD_LIBRARY_PATH=${CUDA_HOME}/lib64
+  export PATH=${CUDA_HOME}/bin:${PATH}
+
+
+
+1.调研AI防抖full-frame系列最新的两篇文献，基于warp的视频稳定一般分为两个步骤：1)motion estimation and smoothing; 2)frame warping。两篇文献的第一个步骤都基于已有的较好方法，创新点都在第二步，如何达到full-frame的warping。
+Out-of-boundary View Synthesis（OVS）方法定义了Affinity Estination Network，用于外推光流边界，从而可以warp对应的pixel到外边界，补全原来需要crop的区域；文章代码未放出，且文中部分公式和方法阐述不清，需要继续跟进。
+Full-frame Video Stabilization（FuSta）方法结合图像域和特征域，在混合域中融合，并利用类似残差的结构回复高频细节，克服了图像域融合多重影和伪影，特征域融合导致模糊的问题。耗时较长，单帧耗时在秒级别
+2.上述文献的相关文献阅读，1）Learning video stabilization using optical flow 2）RAFT
+1)Deep Video  Stabilization Using Adversarial Networks; 2)Contentaware unsupervised deep  homography estimation
+
+
+
