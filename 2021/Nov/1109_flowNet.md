@@ -28,14 +28,31 @@ https://zhuanlan.zhihu.com/p/67302545
 ![image-20211110102503741](1109_flowNet.assets/image-20211110102503741.png)
 
 1. feature map比图像本身更鲁棒，PWC-Net learns feature pyramids  
+
 2. 利用cost volume；use the features to construct a cost volume that stores the matching costs for associating a pixel with its corresponding pixels at the next frame **代价容量存储了两帧图像之间对应像素的匹配代价**
-3. warping layer和 cost volume layer都是固定操作，无可学习参数；
+
+   金字塔第l层计算cost volume
+   $$c_w^l(x)=c_2^l(x+up_2(w^{l+1})(x))$$
+
+   $$cv^l(x_1, x_2)=\frac{1}{N}(c_1^l(x_1))^Tc_w^l(x_2)$$  对应位置的feature求归一化内积
+   cost volume只需在有限区域中计算， $$\left| x_1-x_2 \right|_{\infin}\le d$$， 该层对应的cost volume大小为 $$d^2\times H^l \times W^l$$
+   $$\left| x_1-x_2 \right|_{\infin}\le d$$
+
+3. warping layer和 cost volume layer都是固定操作，无可学习参数；l
+
 4. PWC-Net uses a context network to exploit contextual information to refine the optical flow；上下文信息提取利用了dilated convolutions；
-5. running at about 35 fps on Sintel resolution (1024×436) images  
+
+5. running at about 35 fps on Sintel resolution (1024×436) images
+
+6. Loss
+   定义$$\Theta$$为网络的所有可学习参数，$$w_\Theta^l, w_{GT}^l$$分别为金字塔第l层的预测光流和金标准
+   $$\mathcal L(\Theta)=\displaystyle \sum_{l=l_0}^L\alpha_l\sum_x \left| w_\Theta^l(x) - w_{GT}^l(x) \right|_2 + \gamma \left| \Theta \right|_2$$
+   fine-tuning阶段，$$q\lt 1$$
+   $$\mathcal L(\Theta)=\displaystyle \sum_{l=l_0}^L\alpha_l\sum_x (\left| w_\Theta^l(x) - w_{GT}^l(x) \right|+\epsilon)^q + \gamma \left| \Theta \right|_2$$
 
 
 
-**RAFT: Recurrent All-Pairs Field Transforms forOptical Flow**  2020
+**RAFT: Recurrent All-Pairs Field Transforms for Optical Flow**  2020
 
 * 类似PWC-Net级联金字塔的问题：低分辨率产生的错误无法在高分辨率层复原，在低分辨率层容易忽略小的快速移动对象。
 * 100ms/frame，高分辨率下550ms/frame (1088*1920)
@@ -46,10 +63,10 @@ https://zhuanlan.zhihu.com/p/67302545
   * 光流更新保持在高分辨率图上，因此可以克服级联金字塔的问题
 * Feature Extraction
   * $$g_\theta:\mathbb{R}^{H_0\times{W_0}\times{3}}\rightarrow{\mathbb{R}^{H\times{W}\times{D}}}$$， 其中$$H=H_0/8,W=W_0/8,D=256$$
-* Computing Visual Similarith
+* Computing Visual Similarity
   * correlation volume $$\pmb{C}$$
     $$g_\theta(I_1), g_\theta(I_2)\in{\mathbb{R}^{H\times{W}\times{D}}}$$
-    $$\pmb{C}(g_\theta(I_1), g_\theta(I_2))\in{\mathbb{R}^{H\times{W}\times{H}\times{W}}}$$，  $$C_{ijkl}=\displaystyle\sum_hg_\theta(I_1)_{ijh}\cdot{g_\theta(I_2)_{ijh}}$$
+    $$\pmb{C}(g_\theta(I_1), g_\theta(I_2))\in{\mathbb{R}^{H\times{W}\times{H}\times{W}}}$$，  $$C_{ijkl}=\displaystyle\sum_hg_\theta(I_1)_{ijh}\cdot{g_\theta(I_2)_{klh}}$$
   * correlation pyramid
      4-layer pyramid  {$$\pmb{C}^1,\pmb{C}^2,\pmb{C}^3,\pmb{C}^4$$}，$$\pmb{C}^k\in{\mathbb{R}^{H\times{W}\times{H/2^k}\times{W/2^k}}}$$
   * correlation lookup

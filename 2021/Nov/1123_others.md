@@ -25,6 +25,16 @@
 STN consists of a light convolutional localization network，summarize the current feature map to the size of 4×4×16，followed by a fully connected layer    to regress the feature to a 2 × 3 affine transformation matrix 
 选取过去1秒内等时间间距的5帧作为历史帧，如对于30fps的视频，$$S^t=\{I_s^{t-7},I_s^{t-13},I_s^{t-19},I_s^{t-25},I_s^{t-31}\}$$，对应GT为$$G^t=\{I_{gt}^{t-7},I_{gt}^{t-13},I_{gt}^{t-19},I_{gt}^{t-25},I_{gt}^{t-31}\}$$
 
+![image-20211201113851366](1123_others.assets/image-20211201113851366.png)
+
+STN结构
+
+* Localisation net得到变换参数，如变换定义为仿射变换，则 $$\theta=\left[ \begin{matrix}\theta_{11}&\theta_{12}&\theta_{13}\\\theta_{21}&\theta_{22}&\theta_{23} \end{matrix} \right]$$
+* 参数化网格采样 $$\left(\begin{matrix} x_i^s \\\ y_i^s \end{matrix} \right)=\mathcal{T}_\theta(G)=A_\theta \left(\begin{matrix} x_i^t \\\ y_i^t \\\ 1 \end{matrix} \right)=\left[ \begin{matrix}\theta_{11}&\theta_{12}&\theta_{13}\\\theta_{21}&\theta_{22}&\theta_{23} \end{matrix} \right]\left(\begin{matrix} x_i^t \\\ y_i^t \\\ 1 \end{matrix} \right)$$
+* 可微图像采样（等效于双线性插值，写成如下形式可以求导，从而反向传播）
+  采样前 $$U\in R^{H\times W\times C}$$， 采样后$$V\in R^{H^{'}\times W^{'}\times C}$$
+  $$V_i^c=\displaystyle\sum_{n,m}^{H,W}U_{nm}^c\max(0,1-|x_i^s-m|)\max(0,1-|y_i^s-n|) \qquad \forall i \in [1...H^{'}W^{'}]$$
+
 
 
 **Robust Video Stabilization by Optimization in CNN Weight Space**  2019
